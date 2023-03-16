@@ -1,18 +1,16 @@
 import { Schema, model } from 'mongoose'
 
-const deviceSchema = new Schema(
+const dataSchema = new Schema(
     {
-        mac: String,
-        place: String,
+        deviceId: {
+            ref: 'Device',
+            type: Schema.Types.ObjectId
+        },
         s: [
             {
                 type: Object
             }
-        ],
-        userId: {
-            ref: 'User',
-            type: Schema.Types.ObjectId
-        }
+        ]
     },
     {
         timestamps: {
@@ -24,4 +22,4 @@ const deviceSchema = new Schema(
     }
 )
 
-export default model('Device', deviceSchema)
+export default model('Data', dataSchema)

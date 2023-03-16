@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose'
 import bcrypt from 'bcryptjs'
-import timezone from 'mongoose-timezone'
 
 const userSchema = new Schema(
     {
@@ -10,6 +9,9 @@ const userSchema = new Schema(
             unique: true
         },
         lastname: {
+            type: String,
+        },
+        mobile: {
             type: String,
         },
         email: {
@@ -39,10 +41,15 @@ const userSchema = new Schema(
                 Math.random()
                 .toString(36)
                 .substring(2, 15)
-        }
+        },
+
     },
     {
-        timestamps: true,
+        timestamps: {
+            createdAt: 'createdAt',
+            updatedAt: 'updatedAt',
+            timezone: 'America/Lima'
+        },
         versionKey: false
     }
 )
@@ -56,5 +63,4 @@ userSchema.statics.comparePassword = async (password, receivedPassword) => {
     return await bcrypt.compare(password, receivedPassword)
 }
 
-userSchema.plugin(timezone)
 export default model('User', userSchema)

@@ -33,10 +33,10 @@ import deviceRoutes from './routes/device.routes'
 import configRoutes from './routes/config.routes'
 import helpRoutes from './routes/help.routes'
 
-// app.get('/', (req, res) => {
-//     console.log(req.userId)
-//     res.json({message: 'Welcome to the application.'})
-// })
+app.get('/', (req, res) => {
+    console.log(req.userId)
+    res.json({message: 'Welcome to the application.'})
+})
 
 app.use(`/auth/${process.env.API_VERSION}`, authRoutes)
 app.use(`/${process.env.API_VERSION}/user`, userRoutes)

@@ -1,5 +1,6 @@
 import mqtt from 'mqtt'
 import Device from './models/Device'
+import Data from './models/Data'
 require('dotenv').config()
 
 const socket = require('./socket').socket
@@ -28,8 +29,10 @@ class mqttHandler {
         this.client.on('message', async (topic, message) => {
             try {
                 const data = JSON.parse(message.toString())
+                // console.log(data)
                 if (data.verify) { socket.io.emit('verify', data.verify) /* enviar la mac al front */ }
                 if (data.owl) {
+                    // console.log(data.owl)
                     // Revisar si MAC esta registrado y a que usuario pertenece
                     const mac = data.owl.mac
                     const device = await Device.findOne({mac: mac})
@@ -39,17 +42,17 @@ class mqttHandler {
                         }
                         // actualizar la lista de Device
                         await Device.findByIdAndUpdate(device._id, device)
-                        // guardar dato en base de datos
-                        console.log(device)
                         // enviar datos al front
                         socket.io.emit('deviceData', device)
-                    }
-                    else {
-                        // DISPOSITIVO CONFIGURADO Y FALTA PONER EN PRODUCCION
+                        // guardar dato en base de datos cada tiempo programado en el chip default 10s
+                        if (data.owl.save) {
+                            const newData = new Data({deviceId: device._id, s: device.s})
+                            await newData.save()
+                        }
                     }
                 }
             } catch (error) {
-                console.error(error, 'un dispositivo no registrado intenta enviar datos')
+                // console.error(error, 'un dispositivo no registrado intenta enviar datos de mac')
             }
         })
     }

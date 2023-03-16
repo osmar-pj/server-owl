@@ -20,6 +20,22 @@ export const verifyToken = async (req, res, next) => {
     }
 }
 
+export const isUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.userId)
+        const roles = await Role.find({ _id: { $in: user.roles } })
+        for (let i = 0; i < roles.length; i++) {
+            if (roles[i].name === 'user') {
+                next()
+                return
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({ message: error })
+    }
+}
+
 export const isModerator = async (req, res, next) => {
     try {
         const user = await User.findById(req.userId)

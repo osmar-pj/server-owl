@@ -5,12 +5,12 @@ import jwt from 'jsonwebtoken'
 
 export const signup = async (req, res) => {
     try {
-        console.log(req.body)
-        const { name, lastname, email, password, roles } = req.body
+        const { name, lastname, mobile, email, password, roles } = req.body
 
         const newUser = new User({
             name,
             lastname,
+            mobile,
             email,
             password: await User.encryptPassword(password)
         })
@@ -42,7 +42,7 @@ export const signin = async (req, res) => {
             'roles'
         )
 
-        if (!userFound) return res.status(400).json({ message: 'User not found' })
+        if (!userFound) return res.status(400).json({ message: 'No existe el usuario' })
 
         const matchPassword = await User.comparePassword(
             req.body.password,
@@ -55,6 +55,11 @@ export const signin = async (req, res) => {
         const token = jwt.sign({ id: userFound._id }, process.env.JWT_SECRET, {
             expiresIn: 86400*30*12 // 12 meses
         })
+
+        // user is not valid
+        if (!userFound.valid) {
+            return res.status(401).json({ token: null, message: 'Usuario sin permiso de ingreso' })
+        }
 
         res.json({
             user: userFound.name,

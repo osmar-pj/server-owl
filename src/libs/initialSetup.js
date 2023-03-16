@@ -21,17 +21,18 @@ export const createRoles = async () => {
     console.log(values);
     
     // create Admin
-    const user = await User.findOne({ email: "admin@oowl.com" });
+    const user = await User.findOne({ email: process.env.EMAIL });
     // get roles _id
-    const roles = await Role.find({ name: { $in: ["admin", "moderator"] } });
+    const roles = await Role.find({ name: { $in: ["admin", "moderator", "user"] } });
 
     if (!user) {
       // create a new admin user
       await User.create({
-        name: "Admin",
-        email: "admin@oowl.com",
+        name: process.env.NAME,
+        email: process.env.EMAIL,
+        mobile: process.env.MOBILE,
         valid: true,
-        password: await bcrypt.hash("admin123", 10),
+        password: await bcrypt.hash(process.env.SECRET, 10),
         roles: roles.map((role) => role._id),
       });
       console.log('Admin User Created!')
