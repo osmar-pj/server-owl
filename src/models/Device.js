@@ -12,7 +12,8 @@ const deviceSchema = new Schema(
         userId: {
             ref: 'User',
             type: Schema.Types.ObjectId
-        }
+        },
+        timestamp: Number
     },
     {
         timestamps: {

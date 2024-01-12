@@ -10,7 +10,8 @@ const dataSchema = new Schema(
             {
                 type: Object
             }
-        ]
+        ],
+        timestamp: Number
     },
     {
         timestamps: {

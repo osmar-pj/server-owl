@@ -29,23 +29,25 @@ class mqttHandler {
         this.client.on('message', async (topic, message) => {
             try {
                 const data = JSON.parse(message.toString())
-                // console.log(data)
                 if (data.verify) { socket.io.emit('verify', data.verify) /* enviar la mac al front */ }
-                if (data.owl) {
-                    // console.log(data.owl)
+                if (data) {
                     // Revisar si MAC esta registrado y a que usuario pertenece
-                    const mac = data.owl.mac
+                    const mac = data.mac
                     const device = await Device.findOne({mac: mac})
+                    console.log(device)
                     if (device) {
-                        for (let i = 0; i < data.owl.s.length; i++) {
-                            device.s[i] = {...device.s[i], ...data.owl.s[i]}
+                        console.log(data.timestamp)
+                        for (let i = 0; i < data.s.length; i++) {
+                            device.s[i] = {...device.s[i], ...data.s[i]}
                         }
+                        device.timestamp = data.timestamp
+                        // console.log(device)
                         // actualizar la lista de Device
                         await Device.findByIdAndUpdate(device._id, device)
                         // enviar datos al front
                         socket.io.emit('deviceData', device)
                         // guardar dato en base de datos cada tiempo programado en el chip default 10s
-                        if (data.owl.save) {
+                        if (data.save) {
                             const newData = new Data({deviceId: device._id, s: device.s})
                             await newData.save()
                         }

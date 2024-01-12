@@ -5,7 +5,9 @@ const parameterSchema = new Schema(
         parameter: String,
         icon: String,
         category: String,
-        type: String
+        type: String,
+        al: Number,
+        ah: Number
     },
     {
         versionKey: false
