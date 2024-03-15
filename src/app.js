@@ -34,7 +34,6 @@ import configRoutes from './routes/config.routes'
 import helpRoutes from './routes/help.routes'
 
 app.get('/', (req, res) => {
-    console.log(req.userId)
     res.json({message: 'Welcome to the application.'})
 })
 
